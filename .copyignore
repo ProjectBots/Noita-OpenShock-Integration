@@ -1,0 +1,12 @@
+# Patterns for copy-project.ps1 (PowerShell wildcards, similar spirit to .gitignore)
+# - Lines starting with # are comments
+# - Blank lines are ignored
+# - Trailing / means "directory and everything under it"
+# - Patterns without / match filenames anywhere
+
+.git/
+.vscode/
+.copy-project.ps1
+.copyignore
+.gitignore
+.env

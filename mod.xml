@@ -1,0 +1,9 @@
+	<Mod
+		name="Openshock Integration"
+		description="Uses your Openschock devices to shock you when certain events happen."
+		tags="fun,challenge,immersive,shocking"
+		request_no_api_restrictions="1" 
+		dont_upload_folders="FOLDER_TO_IGNORE1|FOLDER_TO_IGNORE2"
+		dont_upload_files="FILE_TO_IGNORE1|FILE_TO_IGNORE2"
+	> 
+	</Mod>
