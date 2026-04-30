@@ -1,0 +1,6 @@
+api_token=
+device_id_1=
+device_id_2=
+device_id_3=
+device_id_4=
+effect_intensity_curve=
