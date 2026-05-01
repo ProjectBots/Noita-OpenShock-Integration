@@ -24,6 +24,17 @@ mod_settings = {
 		scope = MOD_SETTING_SCOPE_RUNTIME,
 	},
 	{
+		id = "hub_device_id",
+		ui_name = "OpenShock Hub Device ID",
+		ui_description =
+		"The ID of the hub device that all your other devices are connected to. This is required for the mod to work. You can find this in the OpenShock app under 'Hubs > Device > Edit > Id'.",
+		value_default = "",
+		text_max_length = 50,
+		allowed_characters = "0123456789abcdef-",
+		---@diagnostic disable-next-line: undefined-global
+		scope = MOD_SETTING_SCOPE_RUNTIME,
+	},
+	{
 		id = "device_id_1",
 		ui_name = "OpenShock Device ID 1",
 		ui_description =
@@ -72,17 +83,6 @@ mod_settings = {
 		ui_name = "Shock?",
 		ui_description = "Wether to send shock or vibrate signals.",
 		value_default = true,
-		---@diagnostic disable-next-line: undefined-global
-		scope = MOD_SETTING_SCOPE_RUNTIME,
-	},
-	{
-		id = "effect_duration",
-		ui_name = "Effect Duration (ms)",
-		ui_description = "The duration of the effect in milliseconds.",
-		value_default = "500",
-		value_display_formatting = " $0 ms",
-		text_max_length = 10,
-		allowed_characters = "0123456789",
 		---@diagnostic disable-next-line: undefined-global
 		scope = MOD_SETTING_SCOPE_RUNTIME,
 	},

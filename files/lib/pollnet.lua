@@ -24,7 +24,7 @@ pollnet_ctx* pollnet_get_or_init_static();
 void pollnet_shutdown(pollnet_ctx* ctx);
 sockethandle_t pollnet_open_tcp(pollnet_ctx* ctx, const char* addr);
 sockethandle_t pollnet_listen_tcp(pollnet_ctx* ctx, const char* addr);
-sockethandle_t pollnet_open_ws(pollnet_ctx* ctx, const char* url);
+sockethandle_t pollnet_open_ws(pollnet_ctx* ctx, const char* url, const char* headers);
 sockethandle_t pollnet_simple_http_get(pollnet_ctx* ctx, const char* url, const char* headers, bool ret_body_only);
 sockethandle_t pollnet_simple_http_post(pollnet_ctx* ctx, const char* url, const char* headers, const char* data, uint32_t datasize, bool ret_body_only);
 void pollnet_close(pollnet_ctx* ctx, sockethandle_t handle);
@@ -203,8 +203,9 @@ function socket_mt:http_post(url, headers, body, ret_body_only)
 	)
 end
 
-function socket_mt:open_ws(url)
-	return self:_open(pollnet.pollnet_open_ws, url)
+function socket_mt:open_ws(url, headers)
+	headers = format_headers(headers or "")
+	return self:_open(pollnet.pollnet_open_ws, url, headers)
 end
 
 function socket_mt:open_tcp(addr)

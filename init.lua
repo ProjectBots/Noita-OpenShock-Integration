@@ -32,6 +32,7 @@ local function apply_config_override()
 	local config_file_path = "mods/openshock_integration/config_override.txt"
 	local config_override_valid_keys = {
 		["api_token"] = true,
+		["hub_device_id"] = true,
 		["device_id_1"] = true,
 		["device_id_2"] = true,
 		["device_id_3"] = true,
@@ -93,8 +94,9 @@ function OnModSettingsChanged()
 end
 
 function OnWorldPostUpdate()
-	pain_handler.update()
-	openshock.update_reactor()
+	local current_frame = GameGetFrameNum()
+	pain_handler.update(current_frame)
+	openshock.tick(current_frame)
 end
 
 function OnPlayerSpawned()
@@ -108,7 +110,6 @@ end
 function OnPausedChanged(is_paused, is_inventory_pause)
 	if is_paused then
 		pain_handler.set_enabled(false)
-		openshock.send_stop()
 	else
 		pain_handler.set_enabled(true)
 	end

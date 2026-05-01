@@ -5,12 +5,17 @@ end
 --local utils = dofile_once("mods/openshock_integration/files/lib/utils.lua")
 local polylinelib = dofile_once("mods/openshock_integration/files/lib/polyline.lua")
 
-local shock_cooldown_frames = 30 -- just to avoid spamming the API
-
 --- enables or disables the pain handler
 --- @param enabled boolean
 local function set_enabled(enabled)
 	pain_handler.enabled = enabled
+	openshock.set_live_control_effect_intensity(0) -- reset intensity
+	if enabled then
+		openshock.open_live_control()
+	else
+		openshock.close_live_control()
+	end
+	openshock.update_reactor() -- ensure the websocket is getting updated immediately to reflect the new connection state
 end
 
 --- resizes the pain window to the new size, preserving existing values as much as possible
@@ -85,9 +90,8 @@ local function get_player_hp_and_max_hp()
 	return hp, max_hp
 end
 
---- calculates and stores the pain from this frame into the pain window, and updates the last_hp and last_frame values
---- @param current_frame number The current frame number, used to calculate how much to shift the pain window and to store the last_frame value
-local function store_current_pain(current_frame)
+--- calculates and stores the pain from this frame into the pain window
+local function store_current_pain()
 	local hp, max_hp = get_player_hp_and_max_hp()
 
 	if max_hp ~= nil and max_hp > 0 and hp ~= nil and pain_handler.last_hp ~= nil then
@@ -100,7 +104,6 @@ local function store_current_pain(current_frame)
 	end
 
 	pain_handler.last_hp = hp
-	pain_handler.last_frame = current_frame
 end
 
 --- calculates the intensity of the effect based on the current pain using the effect intensity curve, returns 0 if there is no curve or if pain is negligible
@@ -118,41 +121,35 @@ local function calc_intensity(pain)
 	return pain_handler.effect_intensity_curve:get_y(pain * 100)
 end
 
---- processes the current pain in the pain window, calculates the intensity, and sends a shock signal if the intensity is above a certain threshold, also updates the last_shock_frame if a shock is sent
----@param current_frame any
-function process_pain(current_frame)
+--- processes the current pain in the pain window, calculates the intensity, and sets the effect intensity accordingly
+local function process_pain()
 	local total_pain = 0.0
 	for i = 1, #pain_handler.pain_window do
 		total_pain = total_pain + (tonumber(pain_handler.pain_window[i]) or 0.0)
 	end
 
 	local intensity = calc_intensity(total_pain)
-	if intensity > 0.001 then
-		openshock.send_shock(intensity)
-		pain_handler.last_shock_frame = current_frame
-	end
+	openshock.set_live_control_effect_intensity(intensity)
 end
 
 --- the main update function to be called every frame, it checks if the handler is enabled, shifts the pain window, stores the current pain, and processes it
-local function update_pain_handler()
+--- @param current_frame number The current frame number, used to calculate the time delta for shifting the pain window
+local function update_pain_handler(current_frame)
 	if not pain_handler.enabled then
 		return
 	end
 
-	local current_frame = GameGetFrameNum()
-	if current_frame - pain_handler.last_shock_frame < shock_cooldown_frames then
-		return
-	end
-
 	shift_pain_window(current_frame - pain_handler.last_frame)
-	store_current_pain(current_frame)
-	process_pain(current_frame)
+	store_current_pain()
+	process_pain()
+	pain_handler.last_frame = current_frame
 end
 
 --- handles the player's death by sending a shock/vibrate signal with the configured intensity and duration
 local function handle_death()
 	local death_effect_intensity = tonumber(ModSettingGet("openshock_integration.death_effect_intensity")) or 100
 	local death_effect_duration = tonumber(ModSettingGet("openshock_integration.death_effect_duration")) or 500
+	set_enabled(false) -- also closes the live control connection
 	openshock.send_shock(death_effect_intensity, death_effect_duration)
 end
 
@@ -166,7 +163,6 @@ local pain_handler = {
 	pain_window = nil,
 	effect_intensity_curve = nil,
 	last_frame = -math.huge,
-	last_shock_frame = -math.huge,
 	last_hp = 0.0
 }
 
