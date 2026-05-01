@@ -10,3 +10,4 @@
 .copyignore
 .gitignore
 .env
+.banner.png

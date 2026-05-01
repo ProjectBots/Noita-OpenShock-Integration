@@ -1,6 +1,10 @@
 # Noita OpenShock Integration
 
-A small mod integration for Noita that provides a more immersive experience for players with OpenShock devices by sending shock/vibrate commands to the OpenShock API when certain events happen in the game, such as taking damage or dying.
+![Noita OpenShock Integration](banner.png)
+
+A Noita mod that makes combat feel more immediate by sending shock or vibration signals directly into your body when taking damage or dying.
+
+This mod is designed to work with OpenShock, a free and open-source software platform that allows you to connect various devices. You can find more information about OpenShock and how to set it up on their website: [openshock.org](https://openshock.org)
 
 ## Installation
 
