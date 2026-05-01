@@ -108,9 +108,5 @@ function OnPlayerDied()
 end
 
 function OnPausedChanged(is_paused, is_inventory_pause)
-	if is_paused then
-		pain_handler.set_enabled(false)
-	else
-		pain_handler.set_enabled(true)
-	end
+	pain_handler.set_enabled(not is_paused)
 end

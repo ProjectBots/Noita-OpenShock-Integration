@@ -8,6 +8,7 @@ local json = dofile_once("mods/openshock_integration/files/lib/json.lua")
 
 local reactor = netlib.Reactor()
 
+--- updates the reactor, should be called every frame from the main mod loop
 local function update_reactor()
 	reactor:update()
 end
@@ -134,6 +135,7 @@ local function lcg()
 	end)
 end
 
+--- opens the live control websocket connection to the OpenShock API and starts listening for messages, should be called when the mod is initialized or when the API token or hub device ID changes
 local function open_live_control()
 	if not openshock.cache.api_token or openshock.cache.api_token == "" then
 		print("Cannot open live control page, API token not set")
@@ -277,7 +279,7 @@ local function tick(current_frame)
 	update_reactor()
 end
 
---- recaches the config values from the mod settings into the openshock cache for faster access
+--- caches the config values from the mod settings into the openshock cache
 local function recache_config()
 	openshock.cache.api_token = ModSettingGet("openshock_integration.api_token") --[[@as string]]
 	openshock.cache.hub_device_id = ModSettingGet("openshock_integration.hub_device_id") --[[@as string]]

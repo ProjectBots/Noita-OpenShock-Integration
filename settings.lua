@@ -10,7 +10,7 @@ mod_settings_version = 1
 
 mod_settings = {
 	{
-		ui_name = "The annoyingly long values can be set through the\n config override file inside the mod folder!",
+		ui_name = "The annoyingly long values can be set through the\n config_override.txt file inside the mod folder!",
 		---@diagnostic disable-next-line: undefined-global
 		ui_fn = mod_setting_title,
 	},
@@ -90,7 +90,7 @@ mod_settings = {
 		id = "effect_intensity_curve",
 		ui_name = "Effect Intensity Curve",
 		ui_description =
-		"Defines how the intensity of the effect scales with the amount of pain. The first number in each pair is the pain (0-100) (%of hp lost in window) and the second number is the intensity (0-100). For example, '0,0; 0.5,50; 1,100' means that at 0% pain the effect is 0% intense, at 50% pain the effect is 50% intense, and at 100% pain the effect is 100% intense. You can add as many points as you want to create a custom curve. Points are interpolated linearly, so in the previous example 25% pain would result in 25% intensity.",
+		"Defines how the intensity of the effect scales with the amount of pain. The first number in each pair is the pain (0-100) (%of hp lost in window) and the second number is the intensity (0-100). For example, '0,0; 50,50; 100,100' means that at 0% pain the effect is 0% intense, at 50% pain the effect is 50% intense, and at 100% pain the effect is 100% intense. You can add as many points as you want to create a custom curve. Points are interpolated linearly, so in the previous example 25% pain would result in 25% intensity.",
 		value_default = "0,0; 1,0; 2,20; 30,50; 50,80; 90,100; 100,100",
 		text_max_length = 1000,
 		allowed_characters = "0123456789.,; ",

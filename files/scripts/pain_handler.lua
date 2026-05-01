@@ -85,8 +85,8 @@ local function get_player_hp_and_max_hp()
 		return 0.0, 1.0
 	end
 
-	local hp = ComponentGetValue2(comp, "hp")
-	local max_hp = ComponentGetValue2(comp, "max_hp")
+	local hp = tonumber(ComponentGetValue2(comp, "hp"))
+	local max_hp = tonumber(ComponentGetValue2(comp, "max_hp"))
 	return hp, max_hp
 end
 
@@ -98,8 +98,9 @@ local function store_current_pain()
 		local hp_lost = pain_handler.last_hp - hp
 		if hp_lost > 0 then
 			local pain = hp_lost / max_hp
-			pain_handler.pain_window[#pain_handler.pain_window] = (pain_handler.pain_window[#pain_handler.pain_window] or 0.0) +
-				pain
+			local last_idx = #pain_handler.pain_window
+			if last_idx == 0 then last_idx = 1 end
+			pain_handler.pain_window[last_idx] = (pain_handler.pain_window[last_idx] or 0.0) + pain
 		end
 	end
 
