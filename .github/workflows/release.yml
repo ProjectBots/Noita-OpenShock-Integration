@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Package mod
+        id: package
+        shell: pwsh
+        run: |
+          $dest = Join-Path $env:RUNNER_TEMP "package"
+          .\copy-project.ps1 -Destination $dest
+
+          $repoName = ($env:GITHUB_REPOSITORY -split "/")[-1]
+          $tagName = $env:GITHUB_REF_NAME
+          $zipName = "${repoName}-${tagName}.zip"
+          $zipPath = Join-Path $env:GITHUB_WORKSPACE $zipName
+
+          if (Test-Path -LiteralPath $zipPath) {
+            Remove-Item -LiteralPath $zipPath -Force
+          }
+
+          Compress-Archive -Path (Join-Path $dest "*") -DestinationPath $zipPath
+          "ZIP_PATH=$zipPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "ZIP_NAME=$zipName" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.package.outputs.ZIP_PATH }}
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
